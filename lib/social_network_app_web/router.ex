@@ -1,4 +1,5 @@
 defmodule SocialNetworkAppWeb.Router do
+  # alias SocialNetworkAppWeb.ProductController
   use SocialNetworkAppWeb, :router
 
   pipeline :api do
@@ -7,6 +8,8 @@ defmodule SocialNetworkAppWeb.Router do
 
   scope "/api", SocialNetworkAppWeb do
     pipe_through :api
+
+    post "/pro", ProductController, :create
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

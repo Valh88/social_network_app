@@ -1,9 +1,10 @@
 defmodule SocialNetworkAppWeb.Guardian.GuardianAuth do
   alias SocialNetworkApp.Accounts
+  alias SocialNetworkApp.Users
   use Guardian, otp_app: :social_network_app
 
-  def subject_for_token(account, claims) do
-    sub = to_string(account.email)
+  def subject_for_token(account, _claims) do
+    sub = to_string(account.id)
     {:ok, sub}
   end
 
@@ -11,8 +12,8 @@ defmodule SocialNetworkAppWeb.Guardian.GuardianAuth do
     {:error, :no_id_provided}
   end
 
-  def resource_from_claims(%{"sub" => email}) do
-    case Accounts.get_account_by_email(email) do
+  def resource_from_claims(%{"sub" => account_id}) do
+    case Users.get_user_by_id(account_id) do
       nil -> {:error, :not_found}
       account -> {:ok, account}
     end
@@ -42,6 +43,7 @@ defmodule SocialNetworkAppWeb.Guardian.GuardianAuth do
   @spec create_token(any, :access | :admin | :reset) :: {:ok, any, binary}
   def create_token(account, type) do
     {:ok, token, _claims} = encode_and_sign(account, %{}, token_type(type))
+    account = Users.get_user_by_id(account.id)
     {:ok, account, token}
   end
 

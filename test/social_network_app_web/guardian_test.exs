@@ -4,6 +4,7 @@ defmodule SocialNetworkAppWeb.GuardianTest do
   alias SocialNetworkApp.Accounts
   alias SocialNetworkAppWeb.Guardian.GuardianAuth
   import SocialNetworkApp.AccountsFixtures
+  
   test "test auth token" do
     account = create_account_user_fixture()
     {:ok, account_test1, token} = GuardianAuth.authenticate("test@email.ru", "test_password")

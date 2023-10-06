@@ -11,15 +11,20 @@ defmodule SocialNetworkAppWeb.ProductController do
     render(conn, :index, products: products)
   end
 
-  def create(conn, %{"product" => product_params}) do
-    with {:ok, %Product{} = product} <- Products.create_product(product_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/products/#{product}")
-      |> render(:show, product: product)
-    end
+  def create(conn, %{"product" => %Plug.Upload{} = upload}) do
+    IO.inspect(upload)
+    extension = Path.extname(upload.filename)
+    IO.inspect(extension)
+    File.cp(upload.path, "priv/static/media/cover#{extension}")
+    # with {:ok, %Product{} = product} <- Products.create_product(product_params) do
+    #   conn
+    #   |> put_status(:created)
+    #   |> put_resp_header("location", ~p"/api/products/#{product}")
+    #   |> render(:show, product: product)
+    # end
   end
 
+  @spec show(Plug.Conn.t(), map) :: Plug.Conn.t()
   def show(conn, %{"id" => id}) do
     product = Products.get_product!(id)
     render(conn, :show, product: product)

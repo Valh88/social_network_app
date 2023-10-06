@@ -1,5 +1,6 @@
 defmodule SocialNetworkApp.Accounts.Account do
   @moduledoc false
+  alias SocialNetworkApp.Users.User
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -9,7 +10,8 @@ defmodule SocialNetworkApp.Accounts.Account do
   schema "accounts" do
     field :email, :string
     field :password_hash, :string
-
+    has_one :user, User
+  
     timestamps()
   end
 

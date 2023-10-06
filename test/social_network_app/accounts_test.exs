@@ -1,4 +1,5 @@
 defmodule SocialNetworkApp.AccountsTest do
+  alias SocialNetworkApp.Users
   use SocialNetworkApp.DataCase
 
   alias SocialNetworkApp.Products
@@ -8,8 +9,8 @@ defmodule SocialNetworkApp.AccountsTest do
     import SocialNetworkApp.AccountsFixtures
 
     test "get by email user account" do
-      account = create_account_user_fixture()
-      assert Accounts.get_account_by_email("test@email.ru") == account
+      user = create_account_user_fixture()
+      assert Users.get_user_by_id(user.account_id)
     end
   end
 end
