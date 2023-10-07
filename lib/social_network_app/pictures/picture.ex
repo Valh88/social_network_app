@@ -10,6 +10,7 @@ defmodule SocialNetworkApp.Pictures.Picture do
     field :path, :string
     many_to_many :publisher, SocialNetworkApp.Users.User,
       join_through: "pictures_users"
+    has_many :comments, SocialNetworkApp.Comments.Comment
 
     timestamps()
   end

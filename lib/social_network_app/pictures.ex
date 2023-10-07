@@ -13,7 +13,7 @@ defmodule SocialNetworkApp.Pictures do
     |> Repo.insert()
   end
 
-  @spec save_assoc_picture_to_user(%{user_id: binary(), picture_id: integer()}) :: {:ok, %PictureUserAssoc{}}
+  @spec save_assoc_picture_to_user(%{user_id: binary(), picture_id: integer()}, %PictureUserAssoc{}) :: {:ok, struct()}
   def save_assoc_picture_to_user(params, assoc \\ %PictureUserAssoc{}) do
     assoc
     |> PictureUserAssoc.changeset(params)

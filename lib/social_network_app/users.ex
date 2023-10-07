@@ -1,6 +1,6 @@
 defmodule SocialNetworkApp.Users do
   import Ecto.Query, warn: false
-  alias SocialNetworkApp.Pictures
+  alias SocialNetworkApp.Users.Subscribe
   alias SocialNetworkApp.Accounts.Account
   alias SocialNetworkApp.Repo
   alias SocialNetworkApp.Users.User
@@ -16,9 +16,8 @@ defmodule SocialNetworkApp.Users do
 
   @spec add_new_picture_by_user(%User{}, %{name: String.t(), path: String.t()}) :: {:ok, %Picture{}}
   def add_new_picture_by_user(%User{} = account_user, params) do
-    # {:ok, picture} = Pictures.save_picture(params)
     account_user
-    |> User.changeset_pick(params)
+    |> User.changeset(params)
     |> Repo.insert()
   end
 
@@ -27,5 +26,12 @@ defmodule SocialNetworkApp.Users do
     User
     |> where(account_id: ^account_id)
     |> Repo.one()
+  end
+
+  @spec subscribe_to_user(%{subscriber_id: binary(), on_sub_id: binary()}) :: {:ok, struct()}
+  def subscribe_to_user(params) do
+    %Subscribe{}
+    |> Subscribe.changeset(params)
+    |> Repo.insert()
   end
 end
