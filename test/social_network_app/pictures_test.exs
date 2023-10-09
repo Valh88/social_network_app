@@ -35,9 +35,17 @@ defmodule SocialNetworkApp.PicturesTest do
       user = create_account_user_fixture(context.user_params)
       {:ok, picture} = SocialNetworkApp.Pictures.save_all_to_picture(user, context.picture)
       assert picture
-      IO.puts(picture.id)
-      # picture_params = %{picture_id: picture.id, text: "test comment save"}
-      # {:ok, comment} = SocialNetworkApp.Comments.create_comment(picture_params)
+      picture_params = %{picture_id: picture.id, user_id: user.id, text: "test comment save"}
+      {:ok, comment} = SocialNetworkApp.Comments.create_comment(picture_params)
+    end
+
+    test "add raiting from user to picture", context do
+      raiting_exemple = 4.554324234
+      user = create_account_user_fixture(context.user_params)
+      {:ok, picture} = SocialNetworkApp.Pictures.save_all_to_picture(user, context.picture)
+      {:ok, raiting} = SocialNetworkApp.Pictures.add_raiting_from_user_to_picture(picture, user, raiting_exemple)
+      assert raiting.picture_id == picture.id
+      assert raiting.user_id == user.id
     end
   end
 end

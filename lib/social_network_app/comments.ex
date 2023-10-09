@@ -1,6 +1,4 @@
 defmodule SocialNetworkApp.Comments do
-  @doc false
-
   alias SocialNetworkApp.Repo
   alias SocialNetworkApp.Comments.Comment
 

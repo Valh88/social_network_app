@@ -2,8 +2,7 @@ defmodule SocialNetworkApp.Pictures do
   @moduledoc false
 
   import Ecto.Query
-  alias SocialNetworkApp.Pictures.PictureUserAssoc
-  alias SocialNetworkApp.Pictures.Picture
+  alias SocialNetworkApp.Pictures.{PictureUserAssoc, Picture, Raiting}
   alias SocialNetworkApp.Repo
 
   @spec save_picture(%{name: String.t(), path: String.t()}) :: {:ok, %Picture{}}
@@ -31,4 +30,11 @@ defmodule SocialNetworkApp.Pictures do
     |> Repo.one()
   end
 
+  @spec add_raiting_from_user_to_picture(struct(), struct(), float()) :: {:ok, struct()}
+  def add_raiting_from_user_to_picture(picture, user, raiting) do
+    params = %{picture_id: picture.id, user_id: user.id, raiting: raiting}
+    %Raiting{}
+    |> Raiting.changeset(params)
+    |> Repo.insert()
+  end
 end
