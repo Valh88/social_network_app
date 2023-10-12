@@ -1,15 +1,50 @@
 defmodule SocialNetworkAppWeb.Router do
+  # alias SocialNetworkAppWeb.AccountController
   # alias SocialNetworkAppWeb.ProductController
   use SocialNetworkAppWeb, :router
 
+  use Plug.ErrorHandler
+
+  def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
+    conn |> json(%{errors: message}) |> halt()
+  end
+
+  def handle_errors(conn, %{reason: %{message: message}}) do
+    conn |> json(%{errors: message}) |> halt()
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+  end
+
+  pipeline :auth do
+    plug SocialNetworkAppWeb.Guardian.Pipeline
+    plug SocialNetworkAppWeb.Guardian.SetConnUser
   end
 
   scope "/api", SocialNetworkAppWeb do
     pipe_through :api
+  end
 
-    post "/pro", ProductController, :create
+  scope "/api/user", SocialNetworkAppWeb do
+    pipe_through :api
+
+    post "/register", AccountController, :create
+    post "/login", AccountController, :login
+  end
+
+  scope "/api/user", SocialNetworkAppWeb do
+    pipe_through [:api, :auth]
+
+    get "/me", AccountController, :current_user
+    get "/logout", AccountController, :logout
+  end
+
+  scope "/api/pictures", SocialNetworkAppWeb do
+    pipe_through [:api, :auth]
+
+    post "/post", PictureController, :create
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

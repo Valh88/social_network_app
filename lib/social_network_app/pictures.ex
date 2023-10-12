@@ -37,4 +37,36 @@ defmodule SocialNetworkApp.Pictures do
     |> Raiting.changeset(params)
     |> Repo.insert()
   end
+
+  @spec get_pick_all([{:limit, number}, {:offset, number()}]) :: list([name: String.t(), path: String.t(), publisher: binary()])
+  def get_pick_all(limit: limit_on_page, offset: num_page_offset) do
+    offset = max((num_page_offset - 1) * limit_on_page, 0)
+
+    query = from p in Picture,
+      order_by: [desc: p.inserted_at],
+      limit: ^limit_on_page,
+      offset: ^offset,
+      # join: r in Raiting,
+      # on: r.picture_id == p.id,
+      # group_by: [p.id],
+      join: pub in assoc(p, :publisher),
+      select: [
+        name: p.name,
+        path: p.path,
+        publisher: pub.id
+      ]
+      # preload: :publisher
+    Repo.all(query)
+  end
+
+  @spec count_pictures_by_user_id(binary()) :: integer()
+  def count_pictures_by_user_id(user_id) do
+    query = from ap in PictureUserAssoc,
+      where: ap.user_id == ^user_id,
+      # join: u in User, on: u.id == ap.user_id,
+      # join: p in Picture, on: p.id == ap.picture_id,
+      # group_by: [ap.picture_id],
+      select: count(ap)
+    Repo.one(query)
+  end
 end

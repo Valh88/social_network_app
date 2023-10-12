@@ -13,7 +13,7 @@ defmodule SocialNetworkAppWeb.Guardian.GuardianAuth do
   end
 
   def resource_from_claims(%{"sub" => account_id}) do
-    case Users.get_user_by_id(account_id) do
+    case Accounts.get_account_by_id(account_id) do
       nil -> {:error, :not_found}
       account -> {:ok, account}
     end
@@ -43,7 +43,7 @@ defmodule SocialNetworkAppWeb.Guardian.GuardianAuth do
   @spec create_token(any, :access | :admin | :reset) :: {:ok, any, binary}
   def create_token(account, type) do
     {:ok, token, _claims} = encode_and_sign(account, %{}, token_type(type))
-    account = Users.get_user_by_id(account.id)
+    account = Accounts.get_account_by_id(account.id)
     {:ok, account, token}
   end
 

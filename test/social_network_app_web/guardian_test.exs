@@ -13,6 +13,7 @@ defmodule SocialNetworkAppWeb.GuardianTest do
 
     {:ok, claims} = GuardianAuth.decode_and_verify(token)
     {:ok, account_test2} = GuardianAuth.resource_from_claims(claims)
+    IO.inspect(account_test2)
     assert account == account_test2
   end
 

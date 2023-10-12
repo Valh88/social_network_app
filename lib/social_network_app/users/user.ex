@@ -3,6 +3,7 @@ defmodule SocialNetworkApp.Users.User do
   import Ecto.Changeset
   alias SocialNetworkApp.Users.User
   alias SocialNetworkApp.Accounts.Account
+  alias SocialNetworkApp.Pictures.{Raiting, Picture}
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
@@ -17,6 +18,8 @@ defmodule SocialNetworkApp.Users.User do
     many_to_many :subscribe_self, User,
       join_through: SocialNetworkApp.Users.Subscribe,
       join_keys: [subscriber_id: :id, on_sub_id: :id]
+    many_to_many :raiting_add_to, Picture,
+      join_through: Raiting
 
     timestamps()
   end
