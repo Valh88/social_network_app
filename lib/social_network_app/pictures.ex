@@ -19,6 +19,10 @@ defmodule SocialNetworkApp.Pictures do
     |> Repo.insert()
   end
 
+  @spec save_all_to_picture(atom() | %{:id => binary(), optional(any()) => any()}, %{
+          name: binary(),
+          path: binary()
+        }) :: {:ok, struct()}
   def save_all_to_picture(user, params) do
     {:ok, picture} = save_picture(params)
     save_assoc_picture_to_user(%{user_id: user.id, picture_id: picture.id})
@@ -38,7 +42,7 @@ defmodule SocialNetworkApp.Pictures do
     |> Repo.insert()
   end
 
-  @spec get_pick_all([{:limit, number}, {:offset, number()}]) :: list([name: String.t(), path: String.t(), publisher: binary()])
+  @spec get_pick_all([{:limit, number()}, {:offset, number()}]) :: list([name: String.t(), path: String.t(), publisher: binary()])
   def get_pick_all(limit: limit_on_page, offset: num_page_offset) do
     offset = max((num_page_offset - 1) * limit_on_page, 0)
 

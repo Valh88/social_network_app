@@ -1,6 +1,5 @@
 defmodule SocialNetworkAppWeb.Guardian.GuardianAuth do
   alias SocialNetworkApp.Accounts
-  alias SocialNetworkApp.Users
   use Guardian, otp_app: :social_network_app
 
   def subject_for_token(account, _claims) do
@@ -43,7 +42,6 @@ defmodule SocialNetworkAppWeb.Guardian.GuardianAuth do
   @spec create_token(any, :access | :admin | :reset) :: {:ok, any, binary}
   def create_token(account, type) do
     {:ok, token, _claims} = encode_and_sign(account, %{}, token_type(type))
-    account = Accounts.get_account_by_id(account.id)
     {:ok, account, token}
   end
 

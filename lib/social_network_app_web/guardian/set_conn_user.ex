@@ -13,6 +13,8 @@ defmodule SocialNetworkAppWeb.Guardian.SetConnUser do
       account_id = get_session(conn, :account_id)
       if account_id == nil, do: raise ErrorResponsePlug.Unauthorized
       user = Users.get_user_by_account_id(account_id)
+      # b = SocialNetworkAppWeb.Guardian.GuardianAuth.Plug.current_resource(conn)
+      # IO.inspect(b)
       cond do
         account_id && user -> assign(conn, :current_user, user)
         true -> assign(conn, :current_user, nil)

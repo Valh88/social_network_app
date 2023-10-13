@@ -23,10 +23,6 @@ defmodule SocialNetworkAppWeb.Router do
     plug SocialNetworkAppWeb.Guardian.SetConnUser
   end
 
-  scope "/api", SocialNetworkAppWeb do
-    pipe_through :api
-  end
-
   scope "/api/user", SocialNetworkAppWeb do
     pipe_through :api
 
@@ -38,13 +34,21 @@ defmodule SocialNetworkAppWeb.Router do
     pipe_through [:api, :auth]
 
     get "/me", AccountController, :current_user
+    post "/subscribe", AccountController, :subscribe
+    delete "/unsubscribe", AccountController, :unsubscribe
     get "/logout", AccountController, :logout
   end
 
   scope "/api/pictures", SocialNetworkAppWeb do
     pipe_through [:api, :auth]
+    post "/upload", PictureController, :upload
+  end
 
-    post "/post", PictureController, :create
+  scope "/api/pictures", SocialNetworkAppWeb do
+    pipe_through [:api]
+
+    get "/", PictureController, :index
+    get "/:id", PictureController, :show
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

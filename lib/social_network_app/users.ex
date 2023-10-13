@@ -42,6 +42,23 @@ defmodule SocialNetworkApp.Users do
     |> Repo.insert()
   end
 
+   @spec unsubscribe_to_user(%{subscriber_id: binary(), on_sub_id: binary()})
+   :: {:ok, struct()} | {:error, :not_found}
+  def unsubscribe_to_user(params) do
+    case get_subsribe(params) do
+      nil -> {:error, :not_found}
+      sub -> Repo.delete(sub)
+    end
+  end
+
+  defp get_subsribe(params) do
+    %{subscriber_id: user_id, on_sub_id: on_sub_id} = params
+    query = from sub in Subscribe,
+      where: sub.subscriber_id == ^user_id and sub.on_sub_id == ^on_sub_id,
+      select: sub
+    Repo.one(query)
+  end
+  
   def get_all_user_paginate(limit: limit_on_page, offset: num_page_offset) do
     offset = max((num_page_offset - 1) * limit_on_page, 0)
 

@@ -1,5 +1,6 @@
 defmodule SocialNetworkAppWeb.AccountController do
   use SocialNetworkAppWeb, :controller
+  alias SocialNetworkApp.Users.Subscribe
   alias SocialNetworkApp.Users
   alias SocialNetworkApp.Users.User
   alias SocialNetworkApp.Accounts.Account
@@ -46,11 +47,45 @@ defmodule SocialNetworkAppWeb.AccountController do
     |> render(:logout, %{})
   end
 
-  @spec current_user(Plug.Conn.t(), any()) :: Plug.Conn.t()
+  @spec current_user(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def current_user(conn, _params) do
     user_map = Users.get_full_user_info(conn.assigns[:current_user].id)
     conn
     |> put_status(:ok)
     |> render(:current_user, %{user: user_map})
+  end
+
+  @spec subscribe(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def subscribe(conn, %{"subscribe" => %{"on_sub_id" => on_sub_id}}) do
+    current_user = conn.assigns[:current_user]
+    with %User{} = _user <- check_user(on_sub_id),
+      {:ok, %Subscribe{} = subscribe} = Users.subscribe_to_user(
+        %{subscriber_id: current_user.id, on_sub_id: on_sub_id}
+        ) do
+      conn
+      |> put_status(:ok)
+      |> render(:subscribe, %{sub: subscribe})
+    end
+  end
+
+  @spec unsubscribe(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def unsubscribe(conn, %{"unsubscribe" => %{"on_sub_id" => on_sub_id}}) do
+    current_user = conn.assigns[:current_user]
+    with %User{} = _user <- check_user(on_sub_id),
+        {:ok, %Subscribe{} = unsub} <- Users.unsubscribe_to_user(
+          %{subscriber_id: current_user.id, on_sub_id: on_sub_id}
+        ) do
+      conn
+      |> put_status(:ok)
+      |> render(:subscribe, %{sub: unsub})
+    end
+  end
+
+  @spec check_user(binary()) :: struct() | {:error, :not_found}
+  defp check_user(on_sub_id) do
+    case Users.get_user_by_user_id(on_sub_id) do
+      %User{} = user -> user
+      nil -> {:error, :not_found}
+    end
   end
 end

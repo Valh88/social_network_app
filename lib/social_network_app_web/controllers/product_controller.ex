@@ -40,7 +40,6 @@ defmodule SocialNetworkAppWeb.ProductController do
 
   def delete(conn, %{"id" => id}) do
     product = Products.get_product!(id)
-
     with {:ok, %Product{}} <- Products.delete_product(product) do
       send_resp(conn, :no_content, "")
     end

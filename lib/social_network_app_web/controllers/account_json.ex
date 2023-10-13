@@ -18,4 +18,12 @@ defmodule SocialNetworkAppWeb.AccountJSON do
   def current_user(%{user: user}) do
     user
   end
+
+  def subscribe(%{sub: sub}) do
+    %{
+      status: "success",
+      to_sub: sub.on_sub_id
+    }
+  end
+
 end
