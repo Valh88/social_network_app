@@ -13,6 +13,10 @@ defmodule SocialNetworkAppWeb.Router do
     conn |> json(%{errors: message}) |> halt()
   end
 
+  def handle_errors(conn, %{reason: %Maru.Params.ParseError{reason: message}}) do
+    conn |> json(%{errors: message}) |> halt()
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
     plug :fetch_session

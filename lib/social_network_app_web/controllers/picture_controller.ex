@@ -45,6 +45,7 @@ defmodule SocialNetworkAppWeb.PictureController do
     optional :page, Integer
   end
 
+  @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def index(conn, param) do
     check_param = fn par ->
       case par do
