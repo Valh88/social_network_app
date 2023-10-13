@@ -50,7 +50,7 @@ config :social_network_app, SocialNetworkAppWeb.Endpoint,
 # If desired, both `http:` and `https:` keys can be
 # configured to run both http and https servers on
 # different ports.
-
+# MIX_ENV=test mix ecto.reset
 # Enable dev routes for dashboard and mailbox
 config :social_network_app, dev_routes: true
 

@@ -32,7 +32,7 @@ defmodule SocialNetworkApp.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.7.7"},
+      {:phoenix, "~> 1.7.9"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
@@ -48,7 +48,8 @@ defmodule SocialNetworkApp.MixProject do
       {:credo, "~> 1.7.0"},
       {:argon2_elixir, "~> 3.2.1"},
       {:guardian, "~> 2.3.2"},
-      {:guardian_db, "~> 3.0.0"}
+      {:guardian_db, "~> 3.0.0"},
+      {:maru_params, "~> 0.2.10"},
     ]
   end
 

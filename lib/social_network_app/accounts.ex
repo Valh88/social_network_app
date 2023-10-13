@@ -20,4 +20,11 @@ defmodule SocialNetworkApp.Accounts do
     |> where(email: ^email)
     |> Repo.one()
   end
+
+  @spec get_account_by_id(binary()) :: %Account{} | nil
+  def get_account_by_id(account_id) do
+    Account
+    |> where(id: ^account_id)
+    |> Repo.one()
+  end
 end
