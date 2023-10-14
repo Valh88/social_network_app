@@ -69,15 +69,14 @@ defmodule SocialNetworkAppWeb.AccountController do
   end
 
   @spec unsubscribe(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def unsubscribe(conn, %{"unsubscribe" => %{"on_sub_id" => on_sub_id}}) do
+  def unsubscribe(conn, %{"id" => on_sub_id}) do
     current_user = conn.assigns[:current_user]
     with %User{} = _user <- check_user(on_sub_id),
-        {:ok, %Subscribe{} = unsub} <- Users.unsubscribe_to_user(
+        {:ok, %Subscribe{} = _unsub} <- Users.unsubscribe_to_user(
           %{subscriber_id: current_user.id, on_sub_id: on_sub_id}
         ) do
       conn
-      |> put_status(:ok)
-      |> render(:subscribe, %{sub: unsub})
+      |> send_resp(:no_content, "")
     end
   end
 

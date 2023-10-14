@@ -34,7 +34,7 @@ defmodule SocialNetworkApp.Pictures do
     |> Repo.one()
   end
 
-  @spec add_raiting_from_user_to_picture(struct(), struct(), float()) :: {:ok, struct()}
+  @spec add_raiting_from_user_to_picture(struct(), struct(), float() | integer()) :: {:ok, struct()}
   def add_raiting_from_user_to_picture(picture, user, raiting) do
     params = %{picture_id: picture.id, user_id: user.id, raiting: raiting}
     %Raiting{}
@@ -72,5 +72,21 @@ defmodule SocialNetworkApp.Pictures do
       # group_by: [ap.picture_id],
       select: count(ap)
     Repo.one(query)
+  end
+
+  @spec check_raiting(struct(), struct()) :: struct()
+  def check_raiting(user, picture) do
+    query = from r in  Raiting,
+      where: r.user_id == ^user.id and r.picture_id == ^picture.id,
+      select: r
+    Repo.one(query)
+  end
+
+  @spec chek_if_not_exist(struct(), struct()) :: :not_exists | {:error, :forbidden}
+  def chek_if_not_exist(user, picture) do
+    case check_raiting(user, picture) do
+      %Raiting{} = _raiting -> {:error, :forbidden}
+      _ -> :not_exists
+    end
   end
 end
