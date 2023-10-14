@@ -87,4 +87,12 @@ defmodule SocialNetworkAppWeb.AccountController do
       nil -> {:error, :not_found}
     end
   end
+
+  def show(conn, %{"id" => id}) do
+    with user_map <- Users.get_full_user_info(id) do
+      conn
+      |> put_status(:ok)
+      |> render(:user, user: user_map)
+    end
+  end
 end

@@ -26,4 +26,9 @@ defmodule SocialNetworkAppWeb.AccountJSON do
     }
   end
 
+  def user(%{user: user}) do
+    %{
+      data: user
+    }
+  end
 end
