@@ -27,25 +27,33 @@ defmodule SocialNetworkAppWeb.Router do
     plug SocialNetworkAppWeb.Guardian.SetConnUser
   end
 
-  scope "/api/user", SocialNetworkAppWeb do
+  scope "/api/users", SocialNetworkAppWeb do
     pipe_through :api
 
     post "/register", AccountController, :create
     post "/login", AccountController, :login
+    get "/:id", AccountController, :show
   end
 
-  scope "/api/user", SocialNetworkAppWeb do
+  scope "/api/users", SocialNetworkAppWeb do
     pipe_through [:api, :auth]
 
-    get "/me", AccountController, :current_user
-    post "/subscribe", AccountController, :subscribe
-    delete "/unsubscribe", AccountController, :unsubscribe
     get "/logout", AccountController, :logout
+    get "/me", AccountController, :current_user
+
+    post "/subscribe", AccountController, :subscribe
+    delete "/subscribe/:id", AccountController, :unsubscribe
   end
 
   scope "/api/pictures", SocialNetworkAppWeb do
     pipe_through [:api, :auth]
     post "/upload", PictureController, :upload
+  end
+
+  scope "/api/pictures/:id", SocialNetworkAppWeb do
+    pipe_through [:api, :auth]
+
+    post "/raiting", RaitingController, :create
   end
 
   scope "/api/pictures", SocialNetworkAppWeb do

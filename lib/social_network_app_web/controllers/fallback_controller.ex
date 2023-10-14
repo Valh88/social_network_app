@@ -22,7 +22,10 @@ defmodule SocialNetworkAppWeb.FallbackController do
     |> render(:"404")
   end
 
-  def call(conn, opts) do
-    IO.inspect(opts)
+  def call(conn, {:error, :forbidden}) do
+    conn
+    |> put_status(:forbidden)
+    |> put_view(html: SocialNetworkAppWeb.ErrorHTML, json: SocialNetworkAppWeb.ErrorJSON)
+    |> render(:"403")
   end
 end
