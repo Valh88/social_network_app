@@ -28,4 +28,8 @@ defmodule SocialNetworkAppWeb.FallbackController do
     |> put_view(html: SocialNetworkAppWeb.ErrorHTML, json: SocialNetworkAppWeb.ErrorJSON)
     |> render(:"403")
   end
+
+  def call(conn, opts) do
+    IO.inspect(opts)
+  end
 end

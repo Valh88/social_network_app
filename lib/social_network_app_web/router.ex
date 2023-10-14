@@ -2,8 +2,18 @@ defmodule SocialNetworkAppWeb.Router do
   # alias SocialNetworkAppWeb.AccountController
   # alias SocialNetworkAppWeb.ProductController
   use SocialNetworkAppWeb, :router
-
   use Plug.ErrorHandler
+
+  # @swagger_ui_config [
+  #   path: "/api/openapi",
+  #   default_model_expand_depth: 3,
+  #   display_operation_id: true,
+  #   oauth2_redirect_url: {:endpoint_url, "/swaggerui/oauth2-redirect.html"},
+  #   oauth: [
+  #     # client_id: "e2195a7487322a0f19bf"
+  #     client_id: "Iv1.d7c611e5607d77b0"
+  #   ]
+  # ]
 
   def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
     conn |> json(%{errors: message}) |> halt()
@@ -17,9 +27,15 @@ defmodule SocialNetworkAppWeb.Router do
     conn |> json(%{errors: message}) |> halt()
   end
 
+  def handle_errors(conn, message) do
+    IO.inspect(message)
+    conn |> json(%{errors: message}) |> halt()
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
     plug :fetch_session
+    plug OpenApiSpex.Plug.PutApiSpec, module: SocialNetworkAppWeb.ApiSpec
   end
 
   pipeline :auth do
@@ -27,9 +43,26 @@ defmodule SocialNetworkAppWeb.Router do
     plug SocialNetworkAppWeb.Guardian.SetConnUser
   end
 
-  scope "/api/user", SocialNetworkAppWeb do
+  pipeline :browser do
+    plug :accepts, ["html"]
+  end
+
+  scope "/api" do
     pipe_through :api
 
+    get "/openapi", OpenApiSpex.Plug.RenderSpec, []
+  end
+
+  scope "/" do
+    pipe_through :browser
+
+    get "/swag", OpenApiSpex.Plug.SwaggerUI, path: "/api/openapi"
+  end
+
+  scope "/api/users", SocialNetworkAppWeb do
+    pipe_through :api
+
+    get "/:id", AccountController, :show
     post "/register", AccountController, :create
     post "/login", AccountController, :login
   end
@@ -60,6 +93,7 @@ defmodule SocialNetworkAppWeb.Router do
 
     get "/", PictureController, :index
     get "/:id", PictureController, :show
+    post "/add", PictureController, :create
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

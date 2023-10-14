@@ -50,6 +50,7 @@ defmodule SocialNetworkApp.MixProject do
       {:guardian, "~> 2.3.2"},
       {:guardian_db, "~> 3.0.0"},
       {:maru_params, "~> 0.2.10"},
+      {:open_api_spex, "~> 3.18.0"},
     ]
   end
 

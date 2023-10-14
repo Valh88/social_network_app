@@ -1,5 +1,7 @@
 defmodule SocialNetworkAppWeb.AccountController do
   use SocialNetworkAppWeb, :controller
+  use OpenApiSpex.ControllerSpecs
+
   alias SocialNetworkApp.Users.Subscribe
   alias SocialNetworkApp.Users
   alias SocialNetworkApp.Users.User
@@ -7,8 +9,11 @@ defmodule SocialNetworkAppWeb.AccountController do
   alias SocialNetworkApp.Accounts
   alias SocialNetworkAppWeb.Guardian.GuardianAuth
   alias SocialNetworkAppWeb.FallbackController
+  alias OpenApiSpex.{Schema, Reference}
+  alias SocialNetworkAppWeb.Schemas
 
   action_fallback FallbackController
+  plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
 
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, %{"account" => params}) do
@@ -85,6 +90,31 @@ defmodule SocialNetworkAppWeb.AccountController do
     case Users.get_user_by_user_id(on_sub_id) do
       %User{} = user -> user
       nil -> {:error, :not_found}
+    end
+  end
+
+  operation :show,
+    summary: "Show user.",
+    description: "Show a user by ID.",
+    parameters: [
+      id: [
+        in: :path,
+        # `:type` can be an atom, %Schema{}, or %Reference{}
+        type: %Schema{type: :string, minimum: 1},
+        description: "User ID",
+        example: "58c1b9d6-dbe9-42e4-adf1-1bc223371f50",
+        required: true
+      ]
+    ],
+    responses: [
+      ok: {"User", "application/json", Schemas.UserResponse}
+    ]
+
+  def show(conn, %{"id" => id}) do
+    with user_map <- Users.get_full_user_info(id) do
+      conn
+      |> put_status(:ok)
+      |> render(:user, user: user_map)
     end
   end
 end
