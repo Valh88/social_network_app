@@ -6,6 +6,12 @@ defmodule SocialNetworkAppWeb.RaitingController do
   alias SocialNetworkApp.Pictures.Raiting
   alias SocialNetworkApp.Pictures.Picture
 
+  @permission_default actions: [
+                        create: {"raitings", "create"},
+                      ]
+
+  plug(SocialNetworkAppWeb.Guardian.Permissions.CheckPerm, @permission_default)
+
   params :create do
     requires :id, Integer
     requires :raiting, Float
@@ -26,6 +32,11 @@ defmodule SocialNetworkAppWeb.RaitingController do
         conn
         |> put_status(:forbidden)
         |> json(%{errors: %{detail: "add raiting already"}})
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> put_view(json: SocialNetworkAppWeb.ErrorJSON)
+        |> render(:"404")
     end
   end
 end

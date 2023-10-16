@@ -7,7 +7,7 @@ defmodule SocialNetworkApp.Users do
   alias SocialNetworkApp.Users.{User, Subscribe}
   alias SocialNetworkApp.Pictures.Picture
 
-  # @spec create_user(%Account{}, %{account_id: binary()} | %{}) :: {:ok, struct()}
+  @spec create_user(%Account{}, %{account_id: binary(), role_id: integer()}) :: {:ok, struct()}
   def create_user(account, attrs \\ %{}) do
     account
     |> Ecto.build_assoc(:user)

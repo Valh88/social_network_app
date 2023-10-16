@@ -7,11 +7,19 @@ defmodule SocialNetworkAppWeb.PictureController do
   alias SocialNetworkApp.Pictures
 
   action_fallback SocialNetworkAppWeb.FallbackController
+
   @format_defaut [".jpg", ".png", ".jpeg"]
   @static_url "/media/"
   @path "priv/static/media/"
   @limit_default 8
   @offset_default 1
+  @permission_default actions: [
+                        index: {"pictures", "read"},
+                        upload: {"pictures", "create"},
+                        show: {"pictures", "read1"}
+                      ]
+
+  plug(SocialNetworkAppWeb.Guardian.Permissions.CheckPerm, @permission_default)
 
   @spec upload(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def upload(conn, %{"image" => %Plug.Upload{} = upload}) do
@@ -28,7 +36,7 @@ defmodule SocialNetworkAppWeb.PictureController do
   def show(conn, %{"id" => id}) do
     check_pick = fn id ->
       case Pictures.get_picture_by_id(id) do
-        %Picture{} = user -> user
+        %Picture{} = _picture -> _picture
         nil -> {:error, :not_found}
       end
     end

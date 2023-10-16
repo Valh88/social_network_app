@@ -50,10 +50,10 @@ defmodule SocialNetworkAppWeb.Router do
     post "/upload", PictureController, :upload
   end
 
-  scope "/api/pictures/:id", SocialNetworkAppWeb do
+  scope "/api/pictures", SocialNetworkAppWeb do
     pipe_through [:api, :auth]
 
-    post "/raiting", RaitingController, :create
+    post "/:id/raiting", RaitingController, :create
   end
 
   scope "/api/pictures", SocialNetworkAppWeb do
