@@ -16,10 +16,10 @@ defmodule SocialNetworkAppWeb.PictureController do
   @permission_default actions: [
                         index: {"pictures", "read"},
                         upload: {"pictures", "create"},
-                        show: {"pictures", "read1"}
+                        show: {"pictures", "read"}
                       ]
 
-  plug(SocialNetworkAppWeb.Guardian.Permissions.CheckPerm, @permission_default)
+  plug SocialNetworkAppWeb.Guardian.Permissions.CheckPerm, @permission_default when action in [:upload]
 
   @spec upload(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def upload(conn, %{"image" => %Plug.Upload{} = upload}) do
@@ -66,7 +66,7 @@ defmodule SocialNetworkAppWeb.PictureController do
 
     with pictures <- Pictures.get_pick_all(check_param.(param)) do
       conn
-      |> put_status(:created)
+      |> put_status(:ok)
       |> render(:pictures, pictures: pictures, conn: conn)
     end
   end

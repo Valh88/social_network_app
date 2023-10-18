@@ -82,11 +82,11 @@ defmodule SocialNetworkApp.Pictures do
     Repo.one(query)
   end
 
-  @spec chek_if_not_exist(struct(), struct()) :: :not_exists | {:error, :forbidden}
-  def chek_if_not_exist(user, picture) do
+  @spec check_if_not_exist(struct(), struct()) :: :not_exists | {:error, :forbidden}
+  def check_if_not_exist(user, picture) do
     case check_raiting(user, picture) do
-      %Raiting{} = _raiting -> {:error, :forbidden}
-      _ -> :not_exists
+      %Raiting{} = raiting -> {:error, raiting}
+      nil -> nil
     end
   end
 end
