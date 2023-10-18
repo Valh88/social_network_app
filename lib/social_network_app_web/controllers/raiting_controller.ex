@@ -6,6 +6,12 @@ defmodule SocialNetworkAppWeb.RaitingController do
   alias SocialNetworkApp.Pictures.Raiting
   alias SocialNetworkApp.Pictures.Picture
 
+  @permission_default actions: [
+                        create: {"raitings", "create"},
+                      ]
+  action_fallback SocialNetworkAppWeb.FallbackController
+  plug(SocialNetworkAppWeb.Guardian.Permissions.CheckPerm, @permission_default)
+
   params :create do
     requires :id, Integer
     requires :raiting, Float
@@ -15,17 +21,19 @@ defmodule SocialNetworkAppWeb.RaitingController do
   def create(conn, params) do
     user = conn.assigns[:current_user]
     with %Picture{} = picture <- Pictures.get_picture_by_id(params[:id]),
-      :not_exists <- Pictures.chek_if_not_exist(user, picture),
+      nil <- Pictures.check_if_not_exist(user, picture),
       {:ok, %Raiting{} = rating}  <- Pictures.add_raiting_from_user_to_picture(
         picture, user, params[:raiting]) do
     conn
     |> put_status(:ok)
     |> render(:raiting, raiting: rating)
     else
-      {:error, :forbidden} ->
+      {:error, raiting} ->
         conn
         |> put_status(:forbidden)
-        |> json(%{errors: %{detail: "add raiting already"}})
+        |> json(%{errors: %{detail: "add raiting already -- #{raiting.raiting}"}})
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
     end
   end
 end

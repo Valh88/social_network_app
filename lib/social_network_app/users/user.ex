@@ -1,12 +1,12 @@
 defmodule SocialNetworkApp.Users.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias SocialNetworkApp.Users.User
+  alias SocialNetworkApp.Users.{User, Role}
   alias SocialNetworkApp.Accounts.Account
   alias SocialNetworkApp.Pictures.{Raiting, Picture}
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-
   schema "users" do
     belongs_to :account, Account
     many_to_many :pictures, SocialNetworkApp.Pictures.Picture,
@@ -20,6 +20,7 @@ defmodule SocialNetworkApp.Users.User do
       join_keys: [subscriber_id: :id, on_sub_id: :id]
     many_to_many :raiting_add_to, Picture,
       join_through: Raiting
+    belongs_to :role, Role, type: :integer
 
     timestamps()
   end
@@ -27,8 +28,8 @@ defmodule SocialNetworkApp.Users.User do
   @spec changeset(struct(), map()) :: Ecto.Changeset.t()
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:account_id])
-    |> validate_required([:account_id])
+    |> cast(attrs, [:account_id, :role_id])
+    |> validate_required([:account_id, :role_id])
     |> unique_constraint(:account_id)
   end
 end

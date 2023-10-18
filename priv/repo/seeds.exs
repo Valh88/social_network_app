@@ -9,3 +9,10 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+alias SocialNetworkApp.Roles
+for role <- Roles.default_roles() do
+  IO.inspect(Roles.get_role_by_name(role[:name]))
+  unless Roles.get_role_by_name(role[:name]) do
+    {:ok, _role} = Roles.create_role(role)
+  end
+end

@@ -50,10 +50,12 @@ defmodule SocialNetworkAppWeb.Router do
     post "/upload", PictureController, :upload
   end
 
-  scope "/api/pictures/:id", SocialNetworkAppWeb do
+  scope "/api/pictures", SocialNetworkAppWeb do
     pipe_through [:api, :auth]
 
-    post "/raiting", RaitingController, :create
+    post "/:id/raiting", RaitingController, :create
+    post "/:id/comments", CommentController, :create
+    delete "/comments/:id", CommentController, :delete
   end
 
   scope "/api/pictures", SocialNetworkAppWeb do
@@ -61,6 +63,7 @@ defmodule SocialNetworkAppWeb.Router do
 
     get "/", PictureController, :index
     get "/:id", PictureController, :show
+    get "/:id/comments", CommentController, :index
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

@@ -2,19 +2,22 @@ defmodule SocialNetworkAppWeb.AccountController do
   use SocialNetworkAppWeb, :controller
   alias SocialNetworkApp.Users.Subscribe
   alias SocialNetworkApp.Users
-  alias SocialNetworkApp.Users.User
+  alias SocialNetworkApp.Users.{User, Role}
   alias SocialNetworkApp.Accounts.Account
   alias SocialNetworkApp.Accounts
   alias SocialNetworkAppWeb.Guardian.GuardianAuth
   alias SocialNetworkAppWeb.FallbackController
+  alias SocialNetworkApp.Roles
 
   action_fallback FallbackController
+  @default_role "Just user"
 
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, %{"account" => params}) do
     %{"email" => email, "password" => password} = params
     with {:ok, %Account{} = account} <- Accounts.create_account(%{email: email, password_hash: password}),
-          {:ok, %User{} = _user} <- Users.create_user(account, %{account_id: account.id}) do
+         %Role{} = role <- Roles.get_role_by_name(@default_role),
+          {:ok, %User{} = _user} <- Users.create_user(account, %{account_id: account.id, role_id: role.id}) do
       authenticate(conn, email, password)
     end
   end
